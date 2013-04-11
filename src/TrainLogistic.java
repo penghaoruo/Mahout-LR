@@ -65,7 +65,9 @@ public final class TrainLogistic {
   }
 
   public static void main(String[] args) throws Exception {
+	  long start = System.currentTimeMillis();
     mainToOutput(args, new PrintWriter(System.out, true));
+    System.out.printf("time:%.2f s\n", (double)(System.currentTimeMillis()-start)/1000.0);
   }
   
   static void mainToOutput(String[] args, PrintWriter output) throws Exception {
@@ -97,7 +99,7 @@ public final class TrainLogistic {
 	          // read variable names
 	
 	          String line = in.readLine();
-	          int lineCount = 0;
+	          int lineCount = 1;
 	          while (line != null) {
 	            // for each new line, get target and predictors
 	            Vector input = new RandomAccessSparseVector(lmp.getNumFeatures());
@@ -114,7 +116,7 @@ public final class TrainLogistic {
 	            	//System.out.printf("%d-----%d:%.4f====%d\n", k,Integer.valueOf(iv[0])-1,Double.valueOf(iv[1]),lineCount);
 	            	k++;
 	            }
-	            
+	            input.setQuick(lmp.getNumFeatures()-1,1);
 	            // check performance while this is still news
 	            double logP = lr.logLikelihood(targetValue, input);
 	            if (!Double.isInfinite(logP)) {
@@ -132,7 +134,7 @@ public final class TrainLogistic {
 	            }
 	            // now update model
 	            lr.train(targetValue, input);
-	            if ((lineCount+1)%1000==0)
+	            if ((lineCount)%1000==0)
 	            	System.out.printf("%d\t",lineCount);
 	            line = in.readLine();
 	            lineCount++;
@@ -182,15 +184,15 @@ public final class TrainLogistic {
   private static void saveTo(FileOutputStream modelOutput, OnlineLogisticRegression lr) {
 	  PrintWriter w = new PrintWriter(new OutputStreamWriter(modelOutput));
 	  String str = new String(" ");
-	  System.out.printf("%d columns\n",lr.getBeta().numCols());
+	  //System.out.printf("%d columns\n",lr.getBeta().numCols());
+	  System.out.printf("Now, writing file...\n");
 	  for (int column = 0; column < lr.getBeta().numCols(); column++) {
-		  System.out.printf("%f, ", lr.getBeta().get(0, column));
+		  //System.out.printf("%f, ", lr.getBeta().get(0, column));
 		  str = java.lang.String.format("%f\n", lr.getBeta().get(0, column));
 		  w.write(str);
 		  w.flush();
         }
 	  w.close();
-	  System.out.println();
 }
 
 private static double predictorWeight(OnlineLogisticRegression lr, int row, RecordFactory csv, String predictor) {

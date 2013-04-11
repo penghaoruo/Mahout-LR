@@ -1,0 +1,13 @@
+ssh hduser@localhost
+cd /home/henrypeng/mahout_src
+
+javac TrainLogistic.java -cp mahout-examples-0.7-job.jar
+java -cp .:mahout-examples-0.7-job.jar:/home/hduser/hadoop-1.0.4/hadoop-core-1.0.4.jar TrainLogistic \
+--input /home/henrypeng/url/ \
+--output model.txt \
+--target color --categories 2 \
+--predictors x y --types numeric \
+--features 3231962 --passes 10 --rate 50
+
+dimension:3231961
+n:2376130
